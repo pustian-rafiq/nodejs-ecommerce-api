@@ -5,6 +5,7 @@ const morgan = require("morgan");
 
 // import routes
 const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
 const { notFoundHandler, errorHandler } = require("./middlewares/errorhandler");
 dbConnection();
 const app = express();
@@ -15,7 +16,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // define routes
-app.use("/api/users", authRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 
 // error handler middleware
 app.use(notFoundHandler);
