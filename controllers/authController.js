@@ -1,8 +1,9 @@
+const { generateJWTToken } = require("../config/jwtToken");
 const User = require("../models/user");
 const asyncHandler = require("express-async-handler");
 
 // Register a new user
-const register = asyncHandler(async (req, res) => {
+const registerController = asyncHandler(async (req, res) => {
   const email = req.body.email;
   const findUser = await User.findOne({ email });
 
@@ -19,4 +20,24 @@ const register = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { register };
+// Login a user
+const loginController = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (user && (await user.matchPassword(password))) {
+    res.json({
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role,
+      token: generateJWTToken(user),
+    });
+  } else {
+    throw new Error("Invalid Credentials");
+  }
+});
+
+module.exports = { registerController, loginController };
