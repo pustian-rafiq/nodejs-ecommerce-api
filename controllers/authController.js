@@ -1,4 +1,7 @@
-const { generateJWTToken } = require("../config/jwtToken");
+const {
+  generateJWTToken,
+  generateRefreshToken,
+} = require("../config/jwtToken");
 const User = require("../models/user");
 const asyncHandler = require("express-async-handler");
 
@@ -27,8 +30,25 @@ const loginController = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await user.matchPassword(password))) {
+    const refreshToken = generateRefreshToken(user);
+    updateRefreshToken = await User.findByIdAndUpdate(
+      user.id,
+      {
+        refreshToken,
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      // expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+    });
+
     res.json({
-      _id: user._id,
+      id: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,

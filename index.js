@@ -2,7 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv").config();
 const dbConnection = require("./config/dbConnect");
 const morgan = require("morgan");
-
+const cookieParser = require("cookie-parser");
 // import routes
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -14,6 +14,7 @@ const app = express();
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 // define routes
 app.use("/api/auth", authRoutes);

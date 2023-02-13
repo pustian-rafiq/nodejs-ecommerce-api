@@ -5,9 +5,17 @@ const generateJWTToken = ({ _id, firstName, lastName, email, role }) => {
     { _id, firstName, lastName, email, role },
     process.env.JWT_SECRET,
     {
-      expiresIn: "10d",
+      expiresIn: "1d",
     }
   );
 };
 
-module.exports = { generateJWTToken };
+const generateRefreshToken = ({ _id, firstName, lastName, email, role }) => {
+  return jwt.sign(
+    { _id, firstName, lastName, email, role },
+    process.env.JWT_SECRET,
+    { expiresIn: "3d" }
+  );
+};
+
+module.exports = { generateJWTToken, generateRefreshToken };
