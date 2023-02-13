@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
 
-const generateJWTToken = ({ _id, firstName, lastName, email, role }) => {
+const generateJWTToken = ({ id, firstName, lastName, email, role }) => {
+  console.log("jwt", id);
   return jwt.sign(
-    { _id, firstName, lastName, email, role },
+    { id, firstName, lastName, email, role },
     process.env.JWT_SECRET,
     {
       expiresIn: "1d",
@@ -10,9 +11,9 @@ const generateJWTToken = ({ _id, firstName, lastName, email, role }) => {
   );
 };
 
-const generateRefreshToken = ({ _id, firstName, lastName, email, role }) => {
+const generateRefreshToken = ({ id, firstName, lastName, email, role }) => {
   return jwt.sign(
-    { _id, firstName, lastName, email, role },
+    { id, firstName, lastName, email, role },
     process.env.JWT_SECRET,
     { expiresIn: "3d" }
   );

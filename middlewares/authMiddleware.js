@@ -34,6 +34,7 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
       throw new Error("You are not authorized. Please log in.");
     }
 
+    // ekhane only token ace kina test kora hoice but token valid kina test kora hoini
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
       if (err) {
         throw new Error("You are not authorized. Please log in.");
