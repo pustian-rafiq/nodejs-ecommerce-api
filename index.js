@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 // import routes
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const productRoutes = require("./routes/productRoutes");
 const { notFoundHandler, errorHandler } = require("./middlewares/errorhandler");
 dbConnection();
 const app = express();
@@ -19,6 +20,7 @@ app.use(cookieParser());
 // define routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/products", productRoutes);
 
 // error handler middleware
 app.use(notFoundHandler);
