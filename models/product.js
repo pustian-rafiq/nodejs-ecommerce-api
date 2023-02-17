@@ -22,13 +22,21 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
     category: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
+      type: String,
+      required: true,
     },
     brand: {
       type: String,
-      enum: ["Apple", "Toyota", "Honda", "Samsung", "iPhone", "Nokia"],
+      required: true,
     },
+    // category: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "Category",
+    // },
+    // brand: {
+    //   type: String,
+    //   enum: ["Apple", "Toyota", "Honda", "Samsung", "iPhone", "Nokia"],
+    // },
     quantity: {
       type: Number,
       required: true,
@@ -40,10 +48,12 @@ const productSchema = new mongoose.Schema(
     images: {
       type: String,
     },
-    color: {
-      type: String,
-      enum: ["Red", "Green", "Blue", "Yellow", "Black", "White"],
-    },
+    color: [],
+    tags: String,
+    // color: {
+    //   type: String,
+    //   enum: ["Red", "Green", "Blue", "Yellow", "Black", "White"],
+    // },
     ratings: [
       {
         star: Number,
