@@ -51,11 +51,67 @@ const updateProduct = asyncHandler(async (req, res) => {
 });
 const getProducts = asyncHandler(async (req, res) => {
   try {
-    const allProduct = await Product.find();
+    // Product filtering Way-1
+    // const allProduct = await Product.find(req.query);
+
+    // Product filtering Way-2
+    // const allProduct = await Product.find({
+    //   brand: req.query.brand,
+    // });
+
+    // Product filtering Way-3
+    // const allProduct = await Product.where("brand").equals(req.query.brand);
+
+    // Filtering product
+    const queryObj = { ...req.query };
+    const excludeFields = ["page", "limit", "sort", "fields"];
+    excludeFields.forEach((el) => delete queryObj[el]);
+
+    console.log(queryObj, req.query);
+    let queryString = JSON.stringify(queryObj);
+    queryString = queryString.replace(
+      /\b(gte|gt|lte|lt)\b/g,
+      (match) => `$${match}`
+    );
+
+    // Sorting
+    // let query = JSON.parse(queryString);
+    let query = Product.find(JSON.parse(queryString));
+
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(",").join(" ");
+      query = query.sort(sortBy);
+    } else {
+      query = query.sort("-createdAt");
+    }
+    // Limiting the number of fileds
+    if (req.query.fields) {
+      const fields = req.query.fields.split(",").join(" ");
+      query = query.select(fields);
+    } else {
+      query = query.select("-__v");
+    }
+
+    // Pagination
+    const page = req.query.page;
+    const limit = req.query.limit;
+    const skip = (page - 1) * limit;
+
+    query = query.skip(skip).limit(limit);
+    if (req.query.page) {
+      var productCount = await Product.countDocuments();
+      if (skip >= productCount) {
+        throw new Error("Page not found");
+      }
+    }
+
+    const allProduct = await query;
+    // const allProduct = await Product.find(query);
 
     if (allProduct) {
       res.status(201).json({
         products: allProduct,
+        productCount,
       });
     }
   } catch (err) {
