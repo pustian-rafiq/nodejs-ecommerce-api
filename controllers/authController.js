@@ -5,6 +5,7 @@ const {
 const User = require("../models/user");
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
+const validateMongodbId = require("../utils/validateMongodbId");
 
 // Register a new user
 const registerController = asyncHandler(async (req, res) => {
@@ -108,10 +109,28 @@ const logoutController = asyncHandler(async (req, res) => {
     message: "Logout successful",
   }); //Forbiden
 });
+// Update password
+const updatePassword = asyncHandler(async (req, res) => {
+  const { id } = req.user;
+  const password = req.body.password;
+  validateMongodbId(id);
+
+  const user = await User.findById(id);
+  if (password) {
+    user.password = password;
+    const updatedPassword = await user.save();
+    res.status(200).json(updatedPassword);
+  } else {
+    res.status(400).json({
+      error: "Password cannot be empty",
+    });
+  }
+});
 
 module.exports = {
   registerController,
   loginController,
   refreshTokenController,
   logoutController,
+  updatePassword,
 };
